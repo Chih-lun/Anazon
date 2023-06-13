@@ -1,0 +1,24 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div>
+    <form method="GET" action="{% url 'product' %}">
+        <input type="text" name="q" placeholder="Search"/>
+    </form>
+</div>
+
+<div>
+    <a href="{% url 'product' %}">All</a>
+    {% for category in categories %}
+    <a href="{% url 'product' %}">{{category.name}}</a>
+    {% endfor %}
+</div>
+
+<div>
+    {% for product in products %}
+    <h1>{{product.title}}</h1>
+    <img src="{{product.image}}" alt="">
+    <p>${{product.price}}</p>
+    {% endfor %}
+</div>
+{% endblock content %}
