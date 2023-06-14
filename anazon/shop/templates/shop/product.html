@@ -10,7 +10,7 @@
 <div>
     <a href="{% url 'product' %}">All</a>
     {% for category in categories %}
-    <a href="{% url 'product' %}">{{category.name}}</a>
+    <a href="{% url 'product' %}?q={{category.name}}">{{category.name}}</a>
     {% endfor %}
 </div>
 
@@ -19,6 +19,8 @@
     <h1>{{product.title}}</h1>
     <img src="{{product.image}}" alt="">
     <p>${{product.price}}</p>
+    <button type="button"><a href="">Add to cart</a></button>
+    <hr>
     {% endfor %}
 </div>
 {% endblock content %}

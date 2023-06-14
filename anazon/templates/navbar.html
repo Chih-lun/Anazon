@@ -5,9 +5,11 @@
 <a href="{% url 'product' %}">Product</a>
 
 {% if request.user.is_authenticated %}
-<p>Hello {{request.user}}</p>
+<p>Hello {{request.user.first_name}}</p>
 <a href="{% url 'logout' %}">Logout</a>
 {% else %}
-<a href="{% url 'login' %}">Login</a>
+<!-- use next to store the url before login -->
+<a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Login</a>
+<a href="{% url 'register' %}">Register</a>
 {% endif %}
 <hr>
