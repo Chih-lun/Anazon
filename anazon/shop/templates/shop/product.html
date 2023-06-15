@@ -19,8 +19,69 @@
     {% endfor %}
 </div>
 
-<div>
-    {% for product in products %}
+
+    <div class="text-center container py-5">
+      <div class="row">
+        {% for product in products|slice:":3" %}
+        <div class="col-lg-4 col-md-12 mb-4">
+          <a href="{% url 'product_detail' product.pk %}">
+          <div class="card h-100 w-100 shadow">
+            <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+              data-mdb-ripple-color="light">
+              <img height="500" src="{{product.image}}"
+                class="w-100" />
+            </div>
+            <div class="card-body d-flex flex-column justify-content-between">
+              <h5 class="card-title">{{product.title}}</h5>
+              <p class="card-text">${{product.price}}</p>
+            </div>
+          </div>
+          </a>
+        </div> 
+        {% endfor %}
+      </div>
+      <div class="row">
+        {% for product in products|slice:"3:6" %}
+        <div class="col-lg-4 col-md-12 mb-4">
+          <a href="{% url 'product_detail' product.pk %}">
+          <div class="card h-100 w-100 shadow">
+            <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+              data-mdb-ripple-color="light">
+              <img height="500" src="{{product.image}}"
+                class="w-100" />
+            </div>
+            <div class="card-body d-flex flex-column justify-content-between">
+                <h5 class="card-title">{{product.title}}</h5>
+                <p class="card-text">${{product.price}}</p>
+            </div>
+          </div>
+          </a>
+        </div> 
+        {% endfor %}
+      </div>
+      <div class="row">
+        {% for product in products|slice:"6:9" %}
+        <div class="col-lg-4 col-md-12 mb-4">
+          <a href="{% url 'product_detail' product.pk %}">
+          <div class="card h-100 w-100 shadow">
+            <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+              data-mdb-ripple-color="light">
+              <img height="500" src="{{product.image}}"
+                class="w-100" />
+            </div>
+            <div class="card-body d-flex flex-column justify-content-between">
+                <h5 class="card-title">{{product.title}}</h5>
+                <p class="card-text">${{product.price}}</p>
+            </div>
+          </div>
+          </a>
+        </div> 
+        {% endfor %}
+      </div>
+    </div>
+
+
+    <!-- {% for product in products|slice:":5" %}
     <a href="{% url 'product_detail' product.pk %}">
         <div>
             <h1>{{product.title}}</h1>
@@ -29,11 +90,10 @@
             <hr>
         </div>
     </a>
-    {% endfor %}
+    {% endfor %} -->
 
     <ul class="pagination">
         {% if products.has_previous %}
-            <!-- <li><a href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ page_obj.previous_page_number }}">previous</a></li> -->
             <li class="page-item">
                 <a class="page-link" href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
@@ -44,26 +104,21 @@
 
         {% if products.number|add:'-4' > 1 %}
             <li class="page-item"><a class="page-link" href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ page_obj.number|add:'-5' }}">&hellip;</a></li>
-            <!-- <li><a href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ page_obj.number|add:'-5' }}">&hellip;</a></li> -->
         {% endif %}
 
         {% for i in products.paginator.page_range %}
             {% if products.number == i %}
                 <li class="page-item disabled"><a class="page-link">{{i}}</a></li>
-                <!-- <li class="active"><span>{{ i }} <span class="sr-only"></span></span></li> -->
             {% elif i > products.number|add:'-5' and i < products.number|add:'5' %}
                 <li class="page-item"><a class="page-link" href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ i }}">{{ i }}</a></li>
-                <!-- <li><a href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ i }}">{{ i }}</a></li> -->
             {% endif %}
         {% endfor %}
 
         {% if products.paginator.num_pages > products.number|add:'4' %}
             <li class="page-item"><a class="page-link" href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ products.number|add:'5' }}">&hellip;</a></li>
-            <!-- <li><a href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ products.number|add:'5' }}">&hellip;</a></li> -->
         {% endif %}
 
         {% if products.has_next %}
-            <!-- <li><a href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ products.next_page_number }}">next</a></li> -->
             <li class="page-item">
                 <a class="page-link" href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ products.next_page_number }}" aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
@@ -72,12 +127,5 @@
             </li>
         {% endif %}
     </ul>
-    <!-- {% if products.has_previous %}
-    <a href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{products.previous_page_number}}">Previous</a>
-    {% endif %}
-    {% if products.has_next %}
-    <a href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{products.next_page_number}}">Next</a>
-    {% endif %}
-    <p>{{products.number}}</p> -->
 </div>
 {% endblock content %}

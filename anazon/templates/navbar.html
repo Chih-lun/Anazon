@@ -1,27 +1,45 @@
-<a href="/">
-    <h1>LOGO</h1>
-</a>
-
-<a href="{% url 'product' %}">Product</a>
-
-{% if request.user.is_authenticated %}
-<p>Hello {{request.user.first_name}}</p>
-<a href="">Order</a>
-<a href="{% url 'logout' %}">Logout</a>
-{% else %}
-<!-- use next to store the url before login -->
-<a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Login</a>
-<a href="{% url 'register' %}">Register</a>
-{% endif %}
-
-<div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-        Cart
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Anazon</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
     </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-      <li><span class="dropdown-item">Action</span></li>
-      <li><span class="dropdown-item">Another action</span></li>
-      <li><span class="dropdown-item">Something else here</span></li>
-    </ul>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'product' %}">Product</a>
+        </li>
+        {% if request.user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="#">Order</a>
+        </li>
+        <li class="nav-item">
+          <!-- use next to store the url before login -->
+          <a class="nav-link" href="{% url 'logout' %}?next={{ request.get_full_path|urlencode }}">Logout</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <!-- use next to store the url before login -->
+          <a class="nav-link" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'register' %}">Register</a>
+        </li>
+        {% endif %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Cart
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <li><span class="dropdown-item" href="#">Item1</span></li>
+            <li><span class="dropdown-item" href="#">Item2</span></li>
+            <li><span class="dropdown-item" href="#">Item3</span></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
   </div>
-<hr>
+</nav>

@@ -34,7 +34,8 @@ def user_login(request):
 
 def user_logout(request):
     logout(request)
-    return redirect('home')
+    # redirect to the page before login
+    return redirect(request.GET.get('next'))
 
 
 def register(request):
@@ -71,7 +72,7 @@ def product(request):
     if tag:
         products = products.filter(Q(category__name__iexact=tag))
 
-    paginator = Paginator(products, 2)
+    paginator = Paginator(products, 9)
 
     # convert page into int
     try:
