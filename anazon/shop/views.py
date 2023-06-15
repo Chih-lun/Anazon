@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
+from django .core.paginator import Paginator, EmptyPage
 from django.db.models import Q, Subquery
 from .models import Category, Product
 from .forms import LoginForm, RegisterForm
@@ -70,7 +71,21 @@ def product(request):
     if tag:
         products = products.filter(Q(category__name__iexact=tag))
 
-    return render(request, 'shop/product.html', {'categories': catergories, 'tags': tags, 'products': products})
+    paginator = Paginator(products, 2)
+
+    # convert page into int
+    try:
+        page_num = int(request.GET.get('page', 1))
+    except ValueError:
+        page_num = 1
+
+    # avoid not-existing page
+    try:
+        page = paginator.page(page_num)
+    except EmptyPage:
+        page = paginator.page(1)
+
+    return render(request, 'shop/product.html', {'categories': catergories, 'tags': tags, 'products': page})
 
 
 def product_detail(request, pk):

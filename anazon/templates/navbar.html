@@ -13,4 +13,15 @@
 <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Login</a>
 <a href="{% url 'register' %}">Register</a>
 {% endif %}
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        Cart
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      <li><span class="dropdown-item">Action</span></li>
+      <li><span class="dropdown-item">Another action</span></li>
+      <li><span class="dropdown-item">Something else here</span></li>
+    </ul>
+  </div>
 <hr>
