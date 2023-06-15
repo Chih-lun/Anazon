@@ -16,6 +16,9 @@ class User(AbstractUser):
 class Category(models.Model):
     name = models.CharField(max_length=200, unique=True)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
@@ -29,6 +32,9 @@ class Product(models.Model):
     image = models.TextField(null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-updated', '-created']
 
     def __str__(self):
         return self.title

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Subquery
 from .models import Category, Product
 from .forms import LoginForm, RegisterForm
 
@@ -50,8 +50,29 @@ def register(request):
 
 
 def product(request):
-    categories = Category.objects.all()
+    catergories = Category.objects.all()
 
-    q = request.GET.get('q') if request.GET.get('q') != None else ''
-    products = Product.objects.filter(Q(category__name__icontains=q))
-    return render(request, 'shop/product.html', {'categories': categories, 'products': products})
+    search = request.GET.get('search') if request.GET.get(
+        'search') != None else ''
+    if not search:
+        products = Product.objects.all()
+    else:
+        products = Product.objects.filter(
+            Q(title__icontains=search))
+
+    # get related categories
+    tags = Category.objects.filter(pk__in=Subquery(
+        products.values("category")))
+
+    tag = request.GET.get('tag') if request.GET.get(
+        'tag') != None else ''
+
+    if tag:
+        products = products.filter(Q(category__name__iexact=tag))
+
+    return render(request, 'shop/product.html', {'categories': catergories, 'tags': tags, 'products': products})
+
+
+def product_detail(request, pk):
+    product = Product.objects.get(pk=pk)
+    return render(request, 'shop/product_detail.html', {'product': product})

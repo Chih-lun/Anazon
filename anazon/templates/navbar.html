@@ -6,6 +6,7 @@
 
 {% if request.user.is_authenticated %}
 <p>Hello {{request.user.first_name}}</p>
+<a href="">Order</a>
 <a href="{% url 'logout' %}">Logout</a>
 {% else %}
 <!-- use next to store the url before login -->
