@@ -1,18 +1,18 @@
 load();
-
 function load(){
     var cart = localStorage.getItem("cart");
     cart = JSON.parse(cart);
-    
     var dropDown = $('#cart');
     dropDown.html('');
-
     if (cart === null || Object.keys(cart).length === 0){
         dropDown.append("<li><span>Your cart is empty!</span></li>");
         localStorage.removeItem("cart");
     } else {
-        for (var pk in cart){
-            details = cart[pk];
+        var pks = Object.keys(cart).map(pk =>[pk, cart[pk]['title']]).sort((title1,title2) => title1[1].localeCompare(title2[1]));
+        pks = pks.map(pk => Number(pk[0]));
+        for (var i=0; i<pks.length; i++){
+            var pk = pks[i];
+            var details = cart[pk];
             dropDown.append(`
             <li>
                 <span class='dropdown-content'>
