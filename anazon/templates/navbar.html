@@ -30,13 +30,10 @@
         </li>
         {% endif %}
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn btn-primary dropdown-toggle"  data-bs-auto-close="outside" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
             Cart
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><span class="dropdown-item" href="#">Item1</span></li>
-            <li><span class="dropdown-item" href="#">Item2</span></li>
-            <li><span class="dropdown-item" href="#">Item3</span></li>
+          </button>
+          <ul class="dropdown-menu" id="cart" aria-labelledby="dropdownMenuButton1">
           </ul>
         </li>
       </ul>

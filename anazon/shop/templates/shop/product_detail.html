@@ -1,12 +1,12 @@
 {% extends 'main.html' %}
 
 {% block content %}
-
-<h1>{{ product.title }}</h1>
-<img src="{{ product.image }}">
-<h2>${{ product.price }}</h2>
-<input type="number" value="1" name="quantity" min="1" step="1" required>
-<button type="button">Add to cart</button>
+<div id="product_pk" value="{{ product.pk }}">
+<h1 id="product_title" value="{{ product.title }}">{{ product.title }}</h1>
+<img id="product_image" src="{{ product.image }}">
+<h2 id="product_price" value="{{ product.price }}">${{ product.price }}</h2>
+<input type="number" id="product_quantity" value="1" name="quantity" min="1" step="1" required>
+<button type="button" onclick="addToCart()">Add to cart</button>
 <p>{{ product.description }}</p>
-
+</div>
 {% endblock content %}

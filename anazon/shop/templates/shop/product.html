@@ -80,18 +80,6 @@
       </div>
     </div>
 
-
-    <!-- {% for product in products|slice:":5" %}
-    <a href="{% url 'product_detail' product.pk %}">
-        <div>
-            <h1>{{product.title}}</h1>
-            <img src="{{product.image}}" alt="">
-            <p>${{product.price}}</p>
-            <hr>
-        </div>
-    </a>
-    {% endfor %} -->
-
     <ul class="pagination">
         {% if products.has_previous %}
             <li class="page-item">
