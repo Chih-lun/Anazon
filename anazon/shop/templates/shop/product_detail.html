@@ -6,7 +6,7 @@
 <img id="product_image" src="{{ product.image }}">
 <h2 id="product_price" value="{{ product.price }}">${{ product.price }}</h2>
 <input type="number" id="product_quantity" value="1" name="quantity" min="1" step="1" required>
-<button type="button" onclick="addToCart()">Add to cart</button>
+<button type="button" class="btn btn-primary" onclick="addToCart()">Add to cart</button>
 <p>{{ product.description }}</p>
 </div>
 {% endblock content %}
