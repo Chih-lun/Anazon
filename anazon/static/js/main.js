@@ -9,6 +9,7 @@ function load(){
 
     if (cart === null || Object.keys(cart).length === 0){
         dropDown.append("<li><span>Your cart is empty!</span></li>");
+        localStorage.removeItem("cart");
     } else {
         for (var pk in cart){
             details = cart[pk];
