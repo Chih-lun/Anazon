@@ -1,7 +1,11 @@
-loadCart();
+initializeCart();
 
-if (checkCurrentURL('/cart_detail/')){
-    loadCartDetail();
+function initializeCart(){
+    loadCart();
+
+    if (checkCurrentURL('/cart_detail/')){
+        loadCartDetail();
+    }
 }
 
 function getCart(){
@@ -17,6 +21,20 @@ function getCart(){
     return cart;
 }
 
+function setCart(cart){
+    localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function isEmptyCart(cart){
+    return Object.keys(cart).length === 0;
+}
+
+function getSortedKeys(cart){
+    var pks = Object.keys(cart).map(pk =>[pk, cart[pk]['title']]).sort((title1,title2) => title1[1].localeCompare(title2[1]));
+    pks = pks.map(pk => Number(pk[0]));
+    return pks;
+}
+
 function redirect(url){
     location.assign(url);
 }
@@ -24,7 +42,6 @@ function redirect(url){
 function checkCurrentURL(url){
     return window.location.pathname === url;
 }
-
 
 function loadCart(){
     var cart = getCart();
@@ -36,14 +53,13 @@ function loadCart(){
     dropDown.html('');
     
     // check whether the cart is empty or not
-    if (Object.keys(cart).length === 0){
+    if (isEmptyCart(cart)){
         // if cart is empty, show message and then clear cart element in localStorage
         dropDown.append("<li><span>Your cart is empty!</span></li>");
         localStorage.removeItem("cart");
     } else {
         // alphabetical sort primary keys
-        var pks = Object.keys(cart).map(pk =>[pk, cart[pk]['title']]).sort((title1,title2) => title1[1].localeCompare(title2[1]));
-        pks = pks.map(pk => Number(pk[0]));
+        var pks = getSortedKeys(cart);
 
         // generate each product
         for (var i=0; i<pks.length; i++){
@@ -72,7 +88,6 @@ function loadCart(){
     }    
 }
 
-// for tomorrow
 function loadCartDetail(){
     var detail = $("#cart_detail");
     
@@ -82,13 +97,12 @@ function loadCartDetail(){
     var cart = getCart();
     
     // check whether the cart is empty or not
-    if (Object.keys(cart).length === 0){
+    if (isEmptyCart(cart)){
         // if cart is empty, show message and then clear cart element in localStorage
         detail.append("<h1>Your cart is empty!</h1>");
     } else {
         // alphabetical sort primary keys
-        var pks = Object.keys(cart).map(pk =>[pk, cart[pk]['title']]).sort((title1,title2) => title1[1].localeCompare(title2[1]));
-        pks = pks.map(pk => Number(pk[0]));
+        var pks = getSortedKeys(cart);
 
         // generate each product
         for (var i=0; i<pks.length; i++){
@@ -132,7 +146,7 @@ function addToCart(){
     cart[pk] = cartItem;
 
     // update localStorage
-    localStorage.setItem("cart", JSON.stringify(cart));
+    setCart(cart);
 
     // refresh the html element
     loadCart();
@@ -149,7 +163,7 @@ function append(pk){
     cart[pk] = cartItem;
 
     // update localStorage
-    localStorage.setItem("cart", JSON.stringify(cart));
+    setCart(cart);
 
     // refresh the html element
     loadCart();
@@ -176,7 +190,7 @@ function remove(pk){
     }
     
     // update localStorage
-    localStorage.setItem("cart", JSON.stringify(cart));
+    setCart(cart);
 
     // refresh the html element
     loadCart();
@@ -202,7 +216,7 @@ function updateCartItem(pk, quantity){
     cart[pk] = cartItem;
 
     // update localStorage
-    localStorage.setItem("cart", JSON.stringify(cart));
+    setCart(cart);
 
     // refresh the html element
     loadCart();
@@ -219,7 +233,7 @@ function clearCartItem(pk){
     delete cart[pk];
     
     // update localStorage
-    localStorage.setItem("cart", JSON.stringify(cart));
+    setCart(cart);
 
     // refresh the html element
     loadCart();
