@@ -1,0 +1,14 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<h1>cart_detail</h1>
+<form method="POST" action="/checkout/">
+    {% csrf_token %}
+    <!-- <input type="submit" class="btn btn-primary" value="Checkout"> -->
+    <div id="cart_detail">
+
+    </div>
+</form>
+
+{% endblock content %}

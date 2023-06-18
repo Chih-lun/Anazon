@@ -109,8 +109,8 @@
         {% if products.has_next %}
             <li class="page-item">
                 <a class="page-link" href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ products.next_page_number }}" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
                   <span class="sr-only">Next</span>
+                  <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
         {% endif %}

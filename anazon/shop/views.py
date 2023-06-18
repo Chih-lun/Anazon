@@ -1,6 +1,8 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
+from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django .core.paginator import Paginator, EmptyPage
 from django.db.models import Q, Subquery
 from .models import Category, Product
@@ -39,14 +41,16 @@ def user_logout(request):
 
 
 def register(request):
+    form = RegisterForm(request.POST)
+
     if request.user.is_authenticated:
         return redirect('home')
 
-    form = RegisterForm(request.POST)
-    if form.is_valid():
-        user = form.save()
-        login(request, user)
-        return redirect('home')
+    if request.method == 'POST':
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
 
     return render(request, 'shop/register.html', {'form': form})
 
@@ -92,3 +96,21 @@ def product(request):
 def product_detail(request, pk):
     product = Product.objects.get(pk=pk)
     return render(request, 'shop/product_detail.html', {'product': product})
+
+
+def cart_detail(request):
+    '''mainly controlled by frontend'''
+    return render(request, 'shop/cart_detail.html', {})
+
+
+@require_http_methods("POST")
+def checkout(request):
+    ''' POST ONLY METHOD '''
+    if not request.user.is_authenticated:
+        return redirect('/login/?next=/cart_detail/')
+
+    cart_items = dict(request.POST)
+    del cart_items['csrfmiddlewaretoken']
+    print(cart_items)
+
+    return HttpResponse('success')
