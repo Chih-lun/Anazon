@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -8,6 +8,9 @@ from django.db.models import Q, Subquery
 from .models import Category, Product
 from .forms import LoginForm, RegisterForm
 import stripe
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+import json
 
 
 def home(request):
@@ -106,45 +109,107 @@ def cart_detail(request):
 
 @require_http_methods("POST")
 def checkout(request):
-    ''' POST ONLY METHOD '''
+    ''' POST ONLY METHOD TO HANDLE CART ITEMS FROM FRONTEND '''
     if not request.user.is_authenticated:
         return redirect('/login/?next=/cart_detail/')
 
-    cart_items = dict(request.POST)
     # cart_items example [('20', ['1']), ('19', ['2'])]
+    cart_items = dict(request.POST)
     del cart_items['csrfmiddlewaretoken']
+    request.session['cart_items'] = json.dumps(cart_items)
+    return redirect('payment')
 
-    line_items = []
-    try:
-        for item in cart_items.items():
-            product = Product.objects.get(id=item[0])
-            quantity = int(item[1][0])
-            line_items.append({
-                'price_data': {
-                    'currency': 'usd',
-                    'unit_amount': int(product.price * 100),
-                    'product_data': {
-                        'name': product.title,
-                        'description': product.description,
-                        'images': [product.image],
-                    },
-                },
-                'quantity': quantity,
-            })
-    except:
-        return HttpResponse('error')
+
+# @require_http_methods("POST")
+def payment(request):
+    print(request.META['HTTP_REFERER'])
+    cart_items = json.loads(request.session['cart_items'])
+    print(cart_items)
+    # print(request.session['cart_items'])
+    ''' POST ONLY METHOD '''
+    # if not request.user.is_authenticated:
+    #     return redirect('/login/?next=/cart_detail/')
+    # cart_items = request.POST.getlist('cart_item')
+    # quantity = request.POST.getlist('quantity')
+    # first_name = request.POST.get('first_name')
+    # last_name = request.POST.get('first_name')
+    # phone = request.POST.get('phone')
+    # email = request.POST.get('email')
+    # postcode = request.POST.get('postcode')
+    # address = request.POST.get('address')
+
+    # line_items = []
+    # print(len(cart_items))
+    # for cart_item in cart_items:
+    #     print(cart_item)
+    # # try:
+    #     for cart_item in cart_items.items():
+    #         cart_item = tuple(cart_item)
+    #         print(cart_item)
+    #         # product = Product.objects.get(id=cart_item[0])
+    #         # quantity = int(cart_item[1][0])
+    #         # line_items.append({
+    #         #     'price_data': {
+    #         #         'currency': 'usd',
+    #         #         'unit_amount': int(product.price * 100),
+    #         #         'product_data': {
+    #         #             'name': product.title,
+    #         #             'description': product.description,
+    #         #             'images': [product.image],
+    #         #         },
+    #         #     },
+    #         #     'quantity': quantity,
+    #         # })
+    # except:
+    #     return HttpResponse('error')
+
+    return HttpResponse('hh')
+
+    # try:
+    #     checkout_session = stripe.checkout.Session.create(
+    #         payment_method_types=[
+    #             'card',
+    #         ],
+    #         line_items=line_items,
+    #         mode='payment',
+    #         success_url=request.build_absolute_uri(
+    #             reverse('success')) + '?session_id={CHECKOUT_SESSION_ID}',
+    #         cancel_url=request.build_absolute_uri(reverse('cancel')),
+    #     )
+    # except:
+    #     return HttpResponse('error')
+    # return redirect(checkout_session.url, code=303)
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+    # You can find your endpoint's secret in your webhook settings
+    endpoint_secret = settings.STRIPE_ENDPOINT_SECRET
 
     try:
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=[
-                'card',
-            ],
-            line_items=line_items,
-            mode='payment',
-            success_url='https://example.com/success?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url='https://example.com/cancel',
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
         )
-    except:
-        return HttpResponse('error')
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
 
-    return redirect(checkout_session.url, code=303)
+    if (event['type'] == 'checkout.session.completed'):
+        print(event)
+
+    # Passed signature verification
+    return HttpResponse(status=200)
+
+
+def success(request):
+    return render(request, 'shop/success.html', {})
+
+
+def cancel(request):
+    return render(request, 'shop/cancel.html', {})

@@ -1,0 +1,35 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<h1>Checkout</h1>
+<form method="POST" action="/payment">
+    {% csrf_token %}
+    <div>
+        <h2>Product details</h2>
+        {% for cart_item in cart_items %}
+        <label >{{ cart_item.product }}</label>
+        <p>{{ cart_item.quantity }}</p>
+        <input type="hidden" name="cart_item" value="{{ cart_item.product.pk }}">
+        <input type="hidden" name="quantity" value="{{ cart_item.quantity }}">
+        <hr>
+        {% endfor %}
+    </div>
+
+    <div>
+        <h2>Shipping details</h2>
+        <label>First name:</label>
+        <input type="text" name="first_name" required>
+        <label>Last name:</label>
+        <input type="text" name="last_name" required>
+        <label>Phone:</label>
+        <input type="tel" name="phone" pattern="[0-9]{10}" required>
+        <label>Email:</label>
+        <input type="email" name="email" required>
+        <label>Postcode:</label>
+        <input type="text" name="postcode" required>
+        <label>Address:</label>
+        <input type="text" name="address" required>
+    </div>
+    <input type="submit" value="confirm">
+</form>
+{% endblock content %}

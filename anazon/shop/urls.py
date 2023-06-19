@@ -10,4 +10,8 @@ urlpatterns = [
     path('product_detail/<str:pk>', views.product_detail, name='product_detail'),
     path('cart_detail/', views.cart_detail, name="cart_detail"),
     path('checkout/', views.checkout, name='checkout'),
+    path('payment', views.payment, name='payment'),
+    path('stripe_webhook/', views.stripe_webhook, name='stripe_webhook'),
+    path('success/', views.success, name='success'),
+    path('cancel/', views.cancel, name='cancel'),
 ]
