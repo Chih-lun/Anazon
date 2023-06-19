@@ -1,7 +1,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-
+import stripe
 
 # load environment variables
 load_dotenv()
@@ -13,8 +13,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG") == 'True'
 
-ALLOWED_HOSTS = []
+stripe.api_key = os.getenv('STRIPE_API_KEY')
 
+ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',

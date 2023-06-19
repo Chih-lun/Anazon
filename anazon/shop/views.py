@@ -7,6 +7,7 @@ from django .core.paginator import Paginator, EmptyPage
 from django.db.models import Q, Subquery
 from .models import Category, Product
 from .forms import LoginForm, RegisterForm
+import stripe
 
 
 def home(request):
@@ -110,7 +111,40 @@ def checkout(request):
         return redirect('/login/?next=/cart_detail/')
 
     cart_items = dict(request.POST)
+    # cart_items example [('20', ['1']), ('19', ['2'])]
     del cart_items['csrfmiddlewaretoken']
-    print(cart_items)
 
-    return HttpResponse('success')
+    line_items = []
+    try:
+        for item in cart_items.items():
+            product = Product.objects.get(id=item[0])
+            quantity = int(item[1][0])
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': int(product.price * 100),
+                    'product_data': {
+                        'name': product.title,
+                        'description': product.description,
+                        'images': [product.image],
+                    },
+                },
+                'quantity': quantity,
+            })
+    except:
+        return HttpResponse('error')
+
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=[
+                'card',
+            ],
+            line_items=line_items,
+            mode='payment',
+            success_url='https://example.com/success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='https://example.com/cancel',
+        )
+    except:
+        return HttpResponse('error')
+
+    return redirect(checkout_session.url, code=303)
