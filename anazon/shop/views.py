@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, reverse, HttpResponse
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -12,13 +12,10 @@ import stripe
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 import json
+import time
 
 
 def home(request):
-    # print(stripe.checkout.Session.list())
-    # line_items = stripe.checkout.Session.list_line_items(
-    #     'cs_test_b1KpUoBBITqsjawISpEo0ZnZz8TkoB3AOQOOMbuIzgamtDIu3wchGUOaiq')
-    # print(line_items)
     return render(request, 'shop/home.html', {})
 
 
@@ -218,7 +215,7 @@ def checkout(request):
                 },
                 mode='payment',
                 success_url=request.build_absolute_uri(
-                    reverse('success')) + '?session_id={CHECKOUT_SESSION_ID}',
+                    reverse('success_redirect')) + '?session_id={CHECKOUT_SESSION_ID}',
                 cancel_url=request.build_absolute_uri(reverse('cancel')),
             )
         except:
@@ -273,9 +270,25 @@ def stripe_webhook(request):
     return HttpResponse(status=200)
 
 
+def success_redirect(request):
+    request.session['clear_localstorage'] = True
+    request.session['session_id'] = request.GET.get(
+        'session_id')
+    return redirect('success')
+
+
 def success(request):
-    return render(request, 'shop/success.html', {})
+    session_id = request.session.get('session_id')
+    return render(request, 'shop/success.html', {'session_id': session_id})
 
 
 def cancel(request):
     return render(request, 'shop/cancel.html', {})
+
+
+def clear_localstorage(request):
+    if request.session.get('clear_localstorage'):
+        request.session['clear_localstorage'] = False
+        return JsonResponse({'clear_localstorage': True})
+
+    return JsonResponse({'clear_localstorage': False})

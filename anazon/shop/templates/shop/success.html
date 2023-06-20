@@ -2,4 +2,5 @@
 
 {% block content %}
 <h1>Thanks for your purchase!</h1>
+<a href="{% url 'order_detail' session_id %}">{{ session_id }}</a>
 {% endblock content %}

@@ -8,6 +8,22 @@ function refreshCart(){
     if (checkCurrentURL('/cart_detail/')){
         loadCartDetail();
     }
+
+    $.ajax({
+        type: "GET",
+        url: '/clear_localstorage',
+        dataType: "json",
+        success: function (response) {
+            console.log(response.clear_localstorage);
+            if(response.clear_localstorage){
+                localStorage.removeItem("cart");
+                loadCart();
+            }
+        },
+        error: function (thrownError) {
+          console.log(thrownError);
+        }
+      });
 }
 
 function getCart(){

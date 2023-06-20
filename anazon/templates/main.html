@@ -29,6 +29,15 @@
 
     {% endblock %}
 </body>
+
+<!-- clear localStorage -->
+<!-- {% if request.session.clear_localstorage %}
+    <script>
+        localStorage.removeItem("cart");
+        alert('localStorage cleared successfully');
+    </script>
+{% endif %} -->
+
 <!-- load javascript for cart -->
 <script src="{% static 'js/cart.js' %}"></script>
 </html>
