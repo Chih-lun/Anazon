@@ -14,7 +14,7 @@
         </li>
         {% if request.user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="#">Order</a>
+          <a class="nav-link" href="{% url 'order' %}">Order</a>
         </li>
         <li class="nav-item">
           <!-- use next to store the url before login -->

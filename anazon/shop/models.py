@@ -5,7 +5,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class User(AbstractUser):
     # Use email to login
-    username = models.EmailField(unique=True, null=True)
+    username = models.EmailField(unique=True)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
 
@@ -41,18 +41,19 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    # phone = PhoneNumberField(null=False, blank=False)
-    pass
+    stripe_id = models.CharField(max_length=255, null=False, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=255, null=False)
+    last_name = models.CharField(max_length=255, null=False)
+    phone = PhoneNumberField(blank=False, null=False)
+    email = models.EmailField(blank=False, null=False)
+    postcode = models.CharField(max_length=255, null=False)
+    address = models.CharField(max_length=255, null=False)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-updated', '-created']
 
-class OrderItem(models.Model):
-    # title = models.CharField(max_length=255, null=False)
-    # price = models.FloatField(null=False)
-    # image = models.TextField(null=True, blank=True)
-    # updated = models.DateTimeField(auto_now=True)
-    # created = models.DateField(auto_now_add=True)
-    # product = models.ForeignKey(Product, on_delete=models.SET_NULL)
-
-    # def __str__(self):
-    #     return self.title
-    pass
+    def __str__(self):
+        return str(self.pk)

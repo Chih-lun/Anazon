@@ -9,22 +9,24 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'anazon.settings')
 django.setup()
 
 
-def generate_category(category):
+def generate_category(categories):
     from shop.models import Category
-    for c in category:
-        Category.objects.get_or_create(name=c)
+    for category in categories:
+        Category.objects.get_or_create(name=category)
 
 
-def generate_product(product):
+def generate_product(products):
     from shop.models import Category, Product
-    for p in product:
+    for product in products:
         Product.objects.get_or_create(
-            title=p['title'], price=p['price'], description=p['description'], category=Category.objects.get(name=p['category']), image=p['image'])
+            title=product['title'], price=product['price'], description=product['description'], category=Category.objects.get(name=product['category']), image=product['thumbnail'])
 
 
 if __name__ == "__main__":
-    r = requests.get('https://fakestoreapi.com/products')
-    data = r.json()
-    category = set([d['category'] for d in data])
-    generate_category(category)
-    generate_product(data)
+    r = requests.get('https://dummyjson.com/products/categories')
+    categories = r.json()
+    generate_category(categories)
+
+    r = requests.get('https://dummyjson.com/products?limit=100')
+    products = r.json()['products']
+    generate_product(products)

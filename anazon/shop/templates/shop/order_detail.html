@@ -1,0 +1,24 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<h1>Orders</h1>
+<div>
+    <h1>{{ order.stripe_id }}</h1>
+    <p>{{ order.first_name }}</p>
+    <p>{{ order.last_name }}</p>
+    <p>{{ order.phone }}</p>
+    <p>{{ order.email }}</p>
+    <p>{{ order.postcode }}</p>
+    <p>{{ order.address }}</p>
+</div>
+
+<div>
+    {% for order_item in order_items %}
+    <a href="{% url 'product_detail' order_item.pk %}"><h1>{{ order_item.title }}</h1></a>
+    <img src="{{order_item.image}}">
+    <p>{{ order_item.price }}</p>
+    <p>{{ order_item.quantity }}</p>
+    {% endfor %}
+</div>
+{% endblock content %}

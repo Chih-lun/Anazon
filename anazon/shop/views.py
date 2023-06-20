@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django .core.paginator import Paginator, EmptyPage
 from django.db.models import Q, Subquery
-from .models import Category, Product
+from .models import Category, Product, Order, User
 from .forms import LoginForm, RegisterForm
 import stripe
 from django.views.decorators.csrf import csrf_exempt
@@ -14,6 +15,10 @@ import json
 
 
 def home(request):
+    # print(stripe.checkout.Session.list())
+    # line_items = stripe.checkout.Session.list_line_items(
+    #     'cs_test_b1KpUoBBITqsjawISpEo0ZnZz8TkoB3AOQOOMbuIzgamtDIu3wchGUOaiq')
+    # print(line_items)
     return render(request, 'shop/home.html', {})
 
 
@@ -102,14 +107,47 @@ def product_detail(request, pk):
     return render(request, 'shop/product_detail.html', {'product': product})
 
 
+@login_required(login_url='/login/')
+def order(request):
+    orders = Order.objects.filter(user=request.user).all()
+    paginator = Paginator(orders, 10)
+
+    # convert page into int
+    try:
+        page_num = int(request.GET.get('page', 10))
+    except ValueError:
+        page_num = 1
+
+    # avoid not-existing page
+    try:
+        page = paginator.page(page_num)
+    except EmptyPage:
+        page = paginator.page(1)
+
+    return render(request, 'shop/order.html', {'orders': page})
+
+
+@login_required(login_url='/login/')
+def order_detail(request, stripe_id):
+    order = Order.objects.get(stripe_id=stripe_id)
+    line_items = stripe.checkout.Session.list_line_items(order.stripe_id)[
+        'data']
+    order_items = [{'product': stripe.Product.retrieve(line_item['price']['product']), 'price': line_item['price']['unit_amount'],
+                    'quantity': line_item['quantity']} for line_item in line_items]
+    order_items = [{'pk': order_item['product']['metadata']['pk'], 'title':order_item['product']['name'], 'image':order_item['product']['images']
+                    [0], 'price': format(float(order_item['price'])/100, '.2f'), 'quantity': order_item['quantity']} for order_item in order_items]
+
+    return render(request, 'shop/order_detail.html', {'order': order, 'order_items': order_items})
+
+
 def cart_detail(request):
     '''mainly controlled by frontend'''
     return render(request, 'shop/cart_detail.html', {})
 
 
 @require_http_methods("POST")
-def checkout(request):
-    ''' POST ONLY METHOD TO HANDLE CART ITEMS FROM FRONTEND '''
+def checkout_redirect(request):
+    ''' POST ONLY METHOD TO HANDLE CART ITEMS FROM FRONTEND AND REDIRECT IT TO CONFIRM FORM'''
     if not request.user.is_authenticated:
         return redirect('/login/?next=/cart_detail/')
 
@@ -117,70 +155,81 @@ def checkout(request):
     cart_items = dict(request.POST)
     del cart_items['csrfmiddlewaretoken']
     request.session['cart_items'] = json.dumps(cart_items)
-    return redirect('payment')
+    # cart_items = [Product.objects.get(id=cart_item[0])
+    #               for cart_item in cart_items.items()]
+
+    return redirect('checkout')
 
 
-# @require_http_methods("POST")
-def payment(request):
-    print(request.META['HTTP_REFERER'])
+def checkout(request):
+    if not request.META.get('HTTP_REFERER') or not (request.META.get('HTTP_REFERER') ==
+                                                    request.build_absolute_uri(reverse('checkout')) or
+                                                    request.META.get('HTTP_REFERER') ==
+                                                    request.build_absolute_uri(reverse('cart_detail'))):
+        raise HttpResponseForbidden()
+
+    # cart_items example [(<Product: Acer SB220Q bi 21.5 inches Full HD (1920 x 1080) IPS Ultra-Thin>, '1'),
+    #  (<Product: Opna Women's Short Sleeve Moisture>, '2')]
     cart_items = json.loads(request.session['cart_items'])
-    print(cart_items)
-    # print(request.session['cart_items'])
-    ''' POST ONLY METHOD '''
-    # if not request.user.is_authenticated:
-    #     return redirect('/login/?next=/cart_detail/')
-    # cart_items = request.POST.getlist('cart_item')
-    # quantity = request.POST.getlist('quantity')
-    # first_name = request.POST.get('first_name')
-    # last_name = request.POST.get('first_name')
-    # phone = request.POST.get('phone')
-    # email = request.POST.get('email')
-    # postcode = request.POST.get('postcode')
-    # address = request.POST.get('address')
+    cart_items = [{'product': Product.objects.get(id=cart_item[0]), 'quantity':cart_item[1][0]}
+                  for cart_item in cart_items.items()]
 
-    # line_items = []
-    # print(len(cart_items))
-    # for cart_item in cart_items:
-    #     print(cart_item)
-    # # try:
-    #     for cart_item in cart_items.items():
-    #         cart_item = tuple(cart_item)
-    #         print(cart_item)
-    #         # product = Product.objects.get(id=cart_item[0])
-    #         # quantity = int(cart_item[1][0])
-    #         # line_items.append({
-    #         #     'price_data': {
-    #         #         'currency': 'usd',
-    #         #         'unit_amount': int(product.price * 100),
-    #         #         'product_data': {
-    #         #             'name': product.title,
-    #         #             'description': product.description,
-    #         #             'images': [product.image],
-    #         #         },
-    #         #     },
-    #         #     'quantity': quantity,
-    #         # })
-    # except:
-    #     return HttpResponse('error')
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        postcode = request.POST.get('postcode')
+        address = request.POST.get('address')
+        line_items = []
+        for cart_item in cart_items:
+            product = cart_item['product']
+            quantity = cart_item['quantity']
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': int(product.price * 100),
+                    'product_data': {
+                        'name': product.title,
+                        'description': product.description,
+                        'images': [product.image],
+                        'metadata': {
+                            'pk': product.pk,
+                        }
+                    },
+                },
+                'quantity': quantity,
+            })
 
-    return HttpResponse('hh')
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=[
+                    'card',
+                ],
+                line_items=line_items,
+                metadata={
+                    "user_pk": request.user.pk,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "phone": phone,
+                    "email": email,
+                    "postcode": postcode,
+                    "address": address,
+                },
+                mode='payment',
+                success_url=request.build_absolute_uri(
+                    reverse('success')) + '?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url=request.build_absolute_uri(reverse('cancel')),
+            )
+        except:
+            return HttpResponse('error')
 
-    # try:
-    #     checkout_session = stripe.checkout.Session.create(
-    #         payment_method_types=[
-    #             'card',
-    #         ],
-    #         line_items=line_items,
-    #         mode='payment',
-    #         success_url=request.build_absolute_uri(
-    #             reverse('success')) + '?session_id={CHECKOUT_SESSION_ID}',
-    #         cancel_url=request.build_absolute_uri(reverse('cancel')),
-    #     )
-    # except:
-    #     return HttpResponse('error')
-    # return redirect(checkout_session.url, code=303)
+        return redirect(checkout_session.url, code=303)
+
+    return render(request, 'shop/checkout.html', {'cart_items': cart_items})
 
 
+# for local order model
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
@@ -201,7 +250,24 @@ def stripe_webhook(request):
         return HttpResponse(status=400)
 
     if (event['type'] == 'checkout.session.completed'):
-        print(event)
+        user_pk = event['data']['object']['metadata']['user_pk']
+        stripe_id = event['data']['object']['id']
+        first_name = event['data']['object']['metadata']['first_name']
+        last_name = event['data']['object']['metadata']['last_name']
+        phone = event['data']['object']['metadata']['phone']
+        email = event['data']['object']['metadata']['email']
+        postcode = event['data']['object']['metadata']['postcode']
+        address = event['data']['object']['metadata']['address']
+        Order.objects.create(
+            user=User.objects.get(pk=user_pk),
+            stripe_id=stripe_id,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
+            email=email,
+            postcode=postcode,
+            address=address
+        )
 
     # Passed signature verification
     return HttpResponse(status=200)
