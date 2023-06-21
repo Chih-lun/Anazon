@@ -15,7 +15,7 @@ import json
 
 
 def home(request):
-    ''' HOME PAGE '''
+    ''' HOME PAGE'''
     return render(request, 'shop/home.html', {})
 
 
@@ -75,8 +75,6 @@ def register(request):
 def product(request):
     ''' DISPLAY ALL THE PRODUCTS '''
 
-    catergories = Category.objects.all()
-
     search = request.GET.get('search') if request.GET.get(
         'search') != None else ''
 
@@ -87,7 +85,12 @@ def product(request):
         products = Product.objects.filter(
             Q(title__icontains=search))
 
-    # get related categories
+    category = request.GET.get('category') if request.GET.get(
+        'category') != None else ''
+    if category:
+        products = products.filter(Q(category__name__iexact=category))
+
+    # get related tags
     tags = Category.objects.filter(pk__in=Subquery(
         products.values("category")))
 
@@ -113,7 +116,7 @@ def product(request):
     except EmptyPage:
         page = paginator.page(1)
 
-    return render(request, 'shop/product.html', {'categories': catergories, 'tags': tags, 'products': page})
+    return render(request, 'shop/product.html', {'tags': tags, 'products': page})
 
 
 def product_detail(request, pk):
@@ -340,6 +343,13 @@ def cancel(request):
     ''' STRIPE PAYMENT IS CANCEL '''
 
     return render(request, 'shop/cancel.html', {})
+
+
+def get_categories(request):
+    '''GET METHOD TO TELL FRONTEND ALL CATEGORIES SO IT CAN BE DISPLAYED IN NAVBAR'''
+    categories = Category.objects.all()
+    categories = [category.name for category in categories]
+    return JsonResponse({'categories': categories})
 
 
 def clear_localstorage(request):

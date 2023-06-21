@@ -2,12 +2,13 @@
 
 {% block content %}
 
-<form method="POST" action="">
+<div class="position-absolute top-50 start-50 translate-middle text-left">
+  <form method="POST" action="">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit" class="btn btn-primary" value="Register">
-</form>
+  </form>
+  <p>Have had an account? <a href="{% url 'login' %}">Login</a></p>         
+</div>
 
-
-<p>Have had an account? <a href="{% url 'login' %}">Login</a></p>
 {% endblock content %}

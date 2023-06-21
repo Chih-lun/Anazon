@@ -24,3 +24,6 @@ class RegisterForm(UserCreationForm):
         labels = {
             "username": "Email",
         }
+        help_texts = {
+            'password': None,
+        }

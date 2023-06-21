@@ -17,5 +17,7 @@ urlpatterns = [
     path('stripe_webhook/', views.stripe_webhook, name='stripe_webhook'),
     path('success/', views.success, name='success'),
     path('cancel/', views.cancel, name='cancel'),
-    path('clear_localstorage', views.clear_localstorage, name="clear_localstorage"),
+    path('get_categories/', views.get_categories, name='get_categories'),
+    path('clear_localstorage/', views.clear_localstorage,
+         name="clear_localstorage"),
 ]

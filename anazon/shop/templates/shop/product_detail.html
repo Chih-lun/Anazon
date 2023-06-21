@@ -1,12 +1,42 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<div id="product_pk" value="{{ product.pk }}">
-<h1 id="product_title" value="{{ product.title }}">{{ product.title }}</h1>
-<img id="product_image" src="{{ product.image }}">
-<h2 id="product_price" value="{{ product.price }}">${{ product.price }}</h2>
-<input type="number" id="product_quantity" value="1" name="quantity" min="1" step="1" required>
-<button type="button" class="btn btn-primary" onclick="addToCart()">Add to cart</button>
-<p>{{ product.description }}</p>
-</div>
+<!-- source: https://mdbootstrap.com/snippets/standard/mdbootstrap/4852176 -->
+<div class="py-5">
+    <div id="product_pk" value="{{ product.pk }}" class="container">
+      <div class="row gx-5">
+        <aside class="col-lg-6">
+          <div class="border rounded-4 mb-3 d-flex justify-content-center">
+            <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="{{ product.image }}">
+                <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" id="product_image" src="{{ product.image }}">
+            </a>
+          </div>
+
+        </aside>
+        <main class="col-lg-6">
+          <div class="ps-lg-3">
+            <h1 class="title text-dark" id="product_title" value="{{ product.title }}">{{ product.title |title }}</h1>
+            <div class="mb-3">
+                <span class="h3" id="product_price" value="{{ product.price }}">${{ product.price |floatformat:2  }}</span>
+            </div>
+  
+            <p id="product_description">{{ product.description }}</p>
+  
+  
+            <hr />
+  
+            <div class="row mb-4">
+              <div class="col-md-4 col-6 mb-3">
+                <label class="mb-2 d-block">Quantity</label>
+                <div class="input-group mb-3" style="width: 170px;">
+                    <input type="number" id="product_quantity" class="form-control text-center border border-secondary" value="1" name="quantity" min="1" step="1" required>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="addToCart()">Add to cart</button>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
 {% endblock content %}

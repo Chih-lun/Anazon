@@ -1,4 +1,30 @@
-.dropdown-menu {
-    min-height: 400px;
-    min-width: 300px;
+ul.errorlist, .helptext {
+    display:none;
+}
+
+#product_description{
+    font-size: 28px;
+}
+
+
+#login_form, #register_form {
+    height: 60vh;
+}
+
+#cart{
+    min-height: 500px;
+    min-width: 500px;
+    max-height: 300px;
+    overflow-y: scroll;
+    width: max-content;
+    height: max-content;
+}
+
+#dropdown_cartitem{
+    width: 400px;
+}
+
+#cart_message {
+    text-align: center;
+    line-height: 400px;   
 }

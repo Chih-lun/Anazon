@@ -1,6 +1,7 @@
 refreshCart();
 
 function refreshCart(){
+    // localStorage.clear();
     // load dropdown cart
     loadCart();
 
@@ -15,7 +16,6 @@ function refreshCart(){
         url: '/clear_localstorage',
         dataType: "json",
         success: function (response) {
-            console.log(response.clear_localstorage);
             if(response.clear_localstorage){
                 // clean the cart and refresh
                 localStorage.removeItem("cart");
@@ -89,7 +89,7 @@ function loadCart(){
     // check whether the cart is empty or not
     if (isEmptyCart(cart)){
         // if cart is empty, show message and then clear cart element in localStorage
-        dropDown.append("<li><span>Your cart is empty!</span></li>");
+        dropDown.append(`<p id="cart_message">Your cart is empty!</p>`);
         localStorage.removeItem("cart");
     } else {
         // get sorted keys
@@ -101,15 +101,36 @@ function loadCart(){
             var productDetails = cart[pk];
             dropDown.append(`
             <li>
-                <span class='dropdown-content'>
-                    <h1>${productDetails['title']}</h1>
-                    <p>${productDetails['quantity']}</p>
-                    <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
-                    <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
-                    <hr class="dropdown-divider">
-                </span>
+            <div class="col d-flex justify-content-center">
+                <div class="card mb-3" id="dropdown_cartitem">
+                    <div class="row no-gutters">
+                        <div class="col-md-6">
+                        <img src="${productDetails['image']}" height="200" class="card-img" alt="...">
+                        </div>
+                        <div class="col-md-6">
+                        <div class="card-body">
+                            <h5 class="card-title">${productDetails['title']}</h5>
+                            <p class="card-text">${productDetails['quantity']}</p>
+                            <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
+                            <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             </li>
             `);
+            // dropDown.append(`
+            // <li>
+            //     <span class='dropdown-content'>
+            //         <h1>${productDetails['title']}</h1>
+            //         <p>${productDetails['quantity']}</p>
+            //         <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
+            //         <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
+            //         <hr class="dropdown-divider">
+            //     </span>
+            // </li>
+            // `);
         }
 
         dropDown.append(`
@@ -167,7 +188,7 @@ function addToCart(){
     var image = $("#product_image").attr('src');
     var price = $("#product_price").attr('value');
     var quantity = $("#product_quantity").prop('value');
-    
+
     // get cart from localStorage and parse it
     var cart = getCart();
 

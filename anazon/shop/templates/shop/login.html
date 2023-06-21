@@ -1,13 +1,28 @@
 {% extends 'main.html' %}
 
 {% block content %}
+<div class="position-absolute top-50 start-50 translate-middle text-left">
+  <form method="POST" action="">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" class="btn btn-primary" value="Login">
+  </form>
+  <p>Haven't had an account? <a href="{% url 'register' %}">Register</a></p>        
 
-<form method="POST" action="">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" class="btn btn-primary" value="Login">
-</form>
+</div>
 
 
-<p>Haven't had an account? <a href="{% url 'register' %}">Register</a></p>
+  <!-- <div>
+    <div id="login_form" class="row align-items-center">
+      <div class="mx-auto col-10 col-md-8 col-lg-6 text-left">
+        <form method="POST" action="">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-primary" value="Login">
+        </form>
+        <p>Haven't had an account? <a href="{% url 'register' %}">Register</a></p>        
+      </div>
+    </div>
+  </div> -->
+
 {% endblock content %}

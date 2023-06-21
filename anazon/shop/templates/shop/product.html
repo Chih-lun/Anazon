@@ -1,86 +1,53 @@
 {% extends 'main.html' %}
 {% block content %}
-<div>
-    <form method="GET" action="{% url 'product' %}">
-        <input type="text" name="search" placeholder="Search Product"/>
-    </form>
-</div>
+<div class="text-center container py-5">
+  <!-- source: https://themesberg.com/docs/bootstrap-5/pixel/components/e-commerce/#product-card -->
+  <div class="row">
+    <div class="col-md-3">
+          <div class="row">
+            <div class="col-12 col-md-12">
+              <div class="card shadow">
+                  <div class="card-body">
+                      <h3 class="h5 card-title">Tags</h3>
 
-<div>
-    <a href="{% url 'product' %}">All</a>
-    {% for category in categories %}
-    <a href="{% url 'product' %}?tag={{category.name}}" >{{category.name}}</a>
-    {% endfor %}
-</div>
-
-<div>
-    {% for tag in tags %}
-    <a href="{% url 'product' %}?search={{request.GET.search}}&tag={{tag.name}}" >{{tag.name}}</a>
-    {% endfor %}
-</div>
-
-
-    <div class="text-center container py-5">
-      <div class="row">
-        {% for product in products|slice:":3" %}
-        <div class="col-lg-4 col-md-12 mb-4">
-          <a href="{% url 'product_detail' product.pk %}">
-          <div class="card h-100 w-100 shadow">
-            <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
-              data-mdb-ripple-color="light">
-              <img height="500" src="{{product.image}}"
-                class="w-100" />
-            </div>
-            <div class="card-body d-flex flex-column justify-content-between">
-              <h5 class="card-title">{{product.title}}</h5>
-              <p class="card-text">${{product.price}}</p>
+                      {% for tag in tags %}
+                      <ul class="list-group text-gray">
+                          <li class="list-group-item d-flex justify-content-between align-items-center border-0 py-1 px-0 font-small">
+                            <a href="{% url 'product' %}?search={{request.GET.search}}&category={{request.GET.category}}&tag={{tag.name}}" >{{tag.name}}</a>
+                          </li>
+                      </ul>
+                      {% endfor %}
+                  </div>
+              </div>
             </div>
           </div>
-          </a>
-        </div> 
-        {% endfor %}
-      </div>
-      <div class="row">
-        {% for product in products|slice:"3:6" %}
-        <div class="col-lg-4 col-md-12 mb-4">
-          <a href="{% url 'product_detail' product.pk %}">
-          <div class="card h-100 w-100 shadow">
-            <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
-              data-mdb-ripple-color="light">
-              <img height="500" src="{{product.image}}"
-                class="w-100" />
-            </div>
-            <div class="card-body d-flex flex-column justify-content-between">
-                <h5 class="card-title">{{product.title}}</h5>
-                <p class="card-text">${{product.price}}</p>
-            </div>
-          </div>
-          </a>
-        </div> 
-        {% endfor %}
-      </div>
-      <div class="row">
-        {% for product in products|slice:"6:9" %}
-        <div class="col-lg-4 col-md-12 mb-4">
-          <a href="{% url 'product_detail' product.pk %}">
-          <div class="card h-100 w-100 shadow">
-            <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
-              data-mdb-ripple-color="light">
-              <img height="500" src="{{product.image}}"
-                class="w-100" />
-            </div>
-            <div class="card-body d-flex flex-column justify-content-between">
-                <h5 class="card-title">{{product.title}}</h5>
-                <p class="card-text">${{product.price}}</p>
-            </div>
-          </div>
-          </a>
-        </div> 
-        {% endfor %}
-      </div>
     </div>
 
-    <ul class="pagination">
+    <div class="col-md-9">
+      <!-- source: https://mdbootstrap.com/docs/standard/extended/product-cards/#section-3 -->
+        <div class="row">
+          {% for product in products %}
+          <div class="col-lg-4 col-md-12 mb-4">
+            <a href="{% url 'product_detail' product.pk %}">
+            <div class="card h-100 w-100 shadow">
+              <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                data-mdb-ripple-color="light">
+                <img height="350" src="{{product.image}}"
+                  class="w-100" />
+              </div>
+              <div class="card-body d-flex flex-column justify-content-between">
+                <h5 class="card-title">{{product.title |title}}</h5>
+                <p class="card-text">${{product.price |floatformat:2}}</p>
+              </div>
+            </div>
+            </a>
+          </div> 
+          {% endfor %}    
+    </div>
+  </div>
+
+  <div>
+      <ul class="pagination justify-content-center">
         {% if products.has_previous %}
             <li class="page-item">
                 <a class="page-link" href="{% url 'product' %}?search={{request.GET.search}}&tag={{request.GET.tag}}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
@@ -115,5 +82,7 @@
             </li>
         {% endif %}
     </ul>
+  </div>
+</div>
 </div>
 {% endblock content %}

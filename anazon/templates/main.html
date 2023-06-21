@@ -30,14 +30,15 @@
     {% endblock %}
 </body>
 
-<!-- clear localStorage -->
-<!-- {% if request.session.clear_localstorage %}
-    <script>
-        localStorage.removeItem("cart");
-        alert('localStorage cleared successfully');
-    </script>
-{% endif %} -->
+<!-- source: https://mdbootstrap.com/docs/standard/navigation/footer/ -->
+<footer class="bg-light text-center text-lg-start fixed-bottom">
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+      © {% now "Y" %} Copyright:
+      <a class="text-dark" href="https://github.com/Chih-lun">Chih-Lun Chen</a>
+    </div>
+</footer>
 
 <!-- load javascript for cart -->
 <script src="{% static 'js/cart.js' %}"></script>
+<script src="{% static 'js/product_dropdown.js' %}"></script>
 </html>

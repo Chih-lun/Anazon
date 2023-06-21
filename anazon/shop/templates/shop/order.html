@@ -10,9 +10,7 @@
 <a href="{% url 'order_detail' order.stripe_id %}">{{ order.stripe_id }}</a>
 <br>
 {% endfor %}
-{% endif %}
-
-<ul class="pagination">
+<ul class="pagination justify-content-center">
     {% if orders.has_previous %}
         <li class="page-item">
             <a class="page-link" href="{% url 'order' %}?page={{ page_obj.previous_page_number }}" aria-label="Previous">
@@ -47,4 +45,5 @@
         </li>
     {% endif %}
 </ul>
+{% endif %}
 {% endblock content %}
