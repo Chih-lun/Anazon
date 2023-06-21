@@ -9,6 +9,7 @@ function refreshCart(){
         loadCartDetail();
     }
 
+    // request get method to determine whether clean the cart
     $.ajax({
         type: "GET",
         url: '/clear_localstorage',
@@ -16,6 +17,7 @@ function refreshCart(){
         success: function (response) {
             console.log(response.clear_localstorage);
             if(response.clear_localstorage){
+                // clean the cart and refresh
                 localStorage.removeItem("cart");
                 loadCart();
             }

@@ -15,7 +15,6 @@ urlpatterns = [
     path('checkout_redirect/', views.checkout_redirect, name='checkout_redirect'),
     path('checkout', views.checkout, name='checkout'),
     path('stripe_webhook/', views.stripe_webhook, name='stripe_webhook'),
-    path('success_redirect/', views.success_redirect, name='success_redirect'),
     path('success/', views.success, name='success'),
     path('cancel/', views.cancel, name='cancel'),
     path('clear_localstorage', views.clear_localstorage, name="clear_localstorage"),
