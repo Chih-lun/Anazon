@@ -1,6 +1,9 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<h1>Thanks for your purchase!</h1>
-<a href="{% url 'order_detail' session_id %}">{{ session_id }}</a>
+<div class="text-center container py-5">
+    <h1 id="success_message">Thanks for your purchase!</h1>
+    <p>Here is your <a href="{% url 'order_detail' session_id %}">order</a>! </p>
+    
+</div>
 {% endblock content %}

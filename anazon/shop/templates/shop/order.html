@@ -2,14 +2,15 @@
 
 {% block content %}
 
-<h1>Orders</h1>
+<div class="text-center container py-5">
 {% if not orders %}
-<h1>You do not have any order!</h1>
+<h1 id="order_message">You do not have any order!</h1>
 {% else %}
 {% for order in orders %}
 <a href="{% url 'order_detail' order.stripe_id %}">{{ order.stripe_id }}</a>
 <br>
 {% endfor %}
+
 <ul class="pagination justify-content-center">
     {% if orders.has_previous %}
         <li class="page-item">
@@ -46,4 +47,5 @@
     {% endif %}
 </ul>
 {% endif %}
+</div>
 {% endblock content %}

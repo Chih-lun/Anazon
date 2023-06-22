@@ -39,7 +39,7 @@ ul.errorlist, .helptext {
     width: 400px;
 }
 
-#cart_message {
+#cart_message, #order_message, #success_message, #cancel_message {
     text-align: center;
     line-height: 400px;   
 }

@@ -103,7 +103,7 @@ function loadCart(){
             dropDown.append(`
             <li>
             <div class="col d-flex justify-content-center">
-                <div class="card mb-3" id="dropdown_cartitem">
+                <div class="card mb-3 shadow" id="dropdown_cartitem">
                     <div class="row no-gutters">
                         <div class="col-md-6">
                         <a href="/product_detail/${productDetails['pk']}">
@@ -170,7 +170,7 @@ function loadCartDetail(){
 
             detail.append(`
             <div class="col d-flex justify-content-center">
-                <div class="card mb-3" id="detail_cartitem"">
+                <div class="card mb-3 shadow" id="detail_cartitem">
                     <div class="row no-gutters">
                         <div class="col-md-6">
                         <a href="/product_detail/${productDetails['pk']}">

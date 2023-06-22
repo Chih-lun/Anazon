@@ -3,11 +3,14 @@
 {% block content %}
 <div class="text-center container py-5">
     <h1>Checkout</h1>
+    <br>
+    <div class="row">
+    <div class="col-md-8">
         <div>
             <h2>Product details</h2>
             {% for cart_item in cart_items %}
             <div class="col d-flex justify-content-center">
-                <div class="card mb-3" id="detail_cartitem">
+                <div class="card mb-3 shadow" id="detail_cartitem">
                     <div class="row no-gutters">
                         <div class="col-md-6">
                         <img src="{{ cart_item.product.image }}" height="200" class="card-img" alt="...">
@@ -24,10 +27,11 @@
             </div>
             {% endfor %}
         </div>
-
+    </div>
     <br>
     <br>
 
+    <div class="col-md-4">
     <div>
         <h2>Shipping details</h2>
         <div id="shipping_form">
@@ -35,31 +39,40 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label>First name</label>
-                    <input type="text" class="form-control" name="first_name" placeholder="First Name" required>
+                    <input type="text" class="form-control form-control-lg" name="first_name" placeholder="First Name" required>
                 </div>
+                <br>
                 <div class="form-group">
                     <label>Last name</label>
-                    <input type="text" class="form-control" name="last_name" placeholder="Last Name" required>
+                    <input type="text" class="form-control form-control-lg" name="last_name" placeholder="Last Name" required>
                 </div>
+                <br>
                 <div class="form-group">
                     <label>Phone</label>
-                    <input type="tel" class="form-control" name="phone" placeholder="Phone" pattern="[0-9]{10}" required>
+                    <input type="tel" class="form-control form-control-lg" name="phone" placeholder="Phone" pattern="[0-9]{10}" required>
                 </div>
+                <br>
                 <div class="form-group">
                     <label>Email:</label>
-                    <input type="email" class="form-control" name="email" placeholder="Email" required>
+                    <input type="email" class="form-control form-control-lg" name="email" placeholder="Email" required>
                 </div>
+                <br>
                 <div class="form-group">
                     <label>Postcode</label>
-                    <input type="text" class="form-control" name="postcode" placeholder="Postcode" required>
+                    <input type="text" class="form-control form-control-lg" name="postcode" placeholder="Postcode" required>
                 </div>
+                <br>
                 <div class="form-group">
                     <label>Address</label>
-                    <input type="text" class="form-control" name="address" placeholder="Address" required>
+                    <input type="text" class="form-control form-control-lg" name="address" placeholder="Address" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <br>
+                <button type="submit" class="btn btn-primary">Pay</button>
             </form>
         </div>
     </div>  
+    </div>
+
+    </div>
 </div>
 {% endblock content %}
