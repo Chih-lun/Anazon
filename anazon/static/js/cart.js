@@ -99,6 +99,7 @@ function loadCart(){
         for (var i=0; i<pks.length; i++){
             var pk = pks[i];
             var productDetails = cart[pk];
+
             dropDown.append(`
             <li>
             <div class="col d-flex justify-content-center">
@@ -110,7 +111,8 @@ function loadCart(){
                         <div class="col-md-6">
                         <div class="card-body">
                             <h5 class="card-title">${productDetails['title']}</h5>
-                            <p class="card-text">${productDetails['quantity']}</p>
+                            <p class="card-text">$${productDetails['price']}</p>
+                            <p class="card-text">Quantity: ${productDetails['quantity']}</p>
                             <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
                             <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
                         </div>
@@ -120,22 +122,11 @@ function loadCart(){
             </div>
             </li>
             `);
-            // dropDown.append(`
-            // <li>
-            //     <span class='dropdown-content'>
-            //         <h1>${productDetails['title']}</h1>
-            //         <p>${productDetails['quantity']}</p>
-            //         <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
-            //         <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
-            //         <hr class="dropdown-divider">
-            //     </span>
-            // </li>
-            // `);
         }
 
         dropDown.append(`
         <li>
-            <span class='dropdown-content'>
+            <span>
                 <button type="button" class="btn btn-primary" onclick="redirect('/cart_detail')">View Cart</button>
             </span>
         </li>
@@ -156,26 +147,48 @@ function loadCartDetail(){
     // check whether the cart is empty or not
     if (isEmptyCart(cart)){
         // if cart is empty, show message and then clear cart element in localStorage
-        detail.append("<h1>Your cart is empty!</h1>");
+        detail.append(`<h1 id="cart_message">Your cart is empty!</h1>`);
     } else {
         // get sorted keys
         var pks = getSortedKeys(cart);
+
+        // total price
+        var total = 0;
 
         // generate each cartItem and buttons in cart_detail
         for (var i=0; i<pks.length; i++){
             var pk = pks[i];
             var productDetails = cart[pk];
+
+            total = total + parseFloat(productDetails['price']);
+
             detail.append(`
-            <label>${productDetails['title']}</label>
-            <input type="number" name="${pk}" value="${productDetails['quantity']}" min="1" step="1" onchange="updateCartItem(this.name, this.value)"></input>
-            <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
-            <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
-            <button type="button" class="btn btn-danger" value="${pk}" onclick="clearCartItem(this.value)">clear</button>
-            <hr>
-            `);
+            <div class="col d-flex justify-content-center">
+                <div class="card mb-3" id="detail_cartitem"">
+                    <div class="row no-gutters">
+                        <div class="col-md-6">
+                        <img src="${productDetails['image']}" height="300" class="card-img" alt="...">
+                        </div>
+                        <div class="col-md-6">
+                        <div class="card-body container py-5">
+                            <h5 class="card-title">${productDetails['title']}</h5>
+                            <p class="card-text">$${productDetails['price']}</p>
+                            <input class="card-text" type="number" name="${pk}" value="${productDetails['quantity']}" min="1" step="1" onchange="updateCartItem(this.name, this.value)"></input>
+                            <br>
+                            <br>
+                            <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
+                            <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
+                            <button type="button" class="btn btn-danger" value="${pk}" onclick="clearCartItem(this.value)">clear</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `)
         }
 
         detail.append(`
+        <h3>Total: $${total}</h3>
         <input type="submit" class="btn btn-primary" value="Checkout">
         `)
     }

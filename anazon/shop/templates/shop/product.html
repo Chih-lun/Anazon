@@ -13,7 +13,7 @@
                       {% for tag in tags %}
                       <ul class="list-group text-gray">
                           <li class="list-group-item d-flex justify-content-between align-items-center border-0 py-1 px-0 font-small">
-                            <a href="{% url 'product' %}?search={{request.GET.search}}&category={{request.GET.category}}&tag={{tag.name}}" >{{tag.name}}</a>
+                            <a href="{% url 'product' %}?search={{request.GET.search}}&category={{request.GET.category}}&tag={{tag.name}}" >{{tag.name|capfirst}}</a>
                           </li>
                       </ul>
                       {% endfor %}

@@ -2,11 +2,10 @@
 
 {% block content %}
 
-<h1>cart_detail</h1>
 <form method="POST" action="/checkout_redirect/">
     {% csrf_token %}
-    <div id="cart_detail">
-
+    <div class="text-center container py-5" id="cart_detail">
+        <h1>cart_detail</h1>
     </div>
 </form>
 

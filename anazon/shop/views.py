@@ -348,7 +348,7 @@ def cancel(request):
 def get_categories(request):
     '''GET METHOD TO TELL FRONTEND ALL CATEGORIES SO IT CAN BE DISPLAYED IN NAVBAR'''
     categories = Category.objects.all()
-    categories = [category.name for category in categories]
+    categories = [category.name.capitalize() for category in categories]
     return JsonResponse({'categories': categories})
 
 
