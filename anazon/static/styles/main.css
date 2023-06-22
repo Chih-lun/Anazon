@@ -51,3 +51,8 @@ ul.errorlist, .helptext {
 #order {
     width: 55%;
 }
+
+.featurette, .featurette-divider{
+    margin-left: 20%;
+    margin-right: 20%;
+}

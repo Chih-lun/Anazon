@@ -167,13 +167,19 @@ def order_detail(request, stripe_id):
     line_items = stripe.checkout.Session.list_line_items(order.stripe_id)[
         'data']
 
+    # find payment_intent to find total price
+    payment_intent = stripe.checkout.Session.retrieve(order.stripe_id)[
+        'payment_intent']
+    total = float(stripe.PaymentIntent.retrieve(
+        payment_intent)['amount']) / 100
+
     # restructure the order_items from line_items
     order_items = [{'product': stripe.Product.retrieve(line_item['price']['product']), 'price': line_item['price']['unit_amount'],
                     'quantity': line_item['quantity']} for line_item in line_items]
     order_items = [{'pk': order_item['product']['metadata']['pk'], 'title':order_item['product']['name'], 'image':order_item['product']['images']
                     [0], 'price': format(float(order_item['price'])/100, '.2f'), 'quantity': order_item['quantity']} for order_item in order_items]
 
-    return render(request, 'shop/order_detail.html', {'order': order, 'order_items': order_items})
+    return render(request, 'shop/order_detail.html', {'order': order, 'order_items': order_items, 'total': total})
 
 
 def cart_detail(request):
@@ -219,6 +225,9 @@ def checkout(request):
     #  (<Product: Opna Women's Short Sleeve Moisture>, '2')]
     cart_items = [{'product': Product.objects.get(pk=cart_item[0]), 'quantity':cart_item[1][0]}
                   for cart_item in cart_items.items()]
+    # total price
+    total = sum([cart_item['product'].price *
+                 int(cart_item['quantity']) for cart_item in cart_items])
 
     if request.method == 'POST':
         # shipment details
@@ -278,7 +287,7 @@ def checkout(request):
         return redirect(checkout_session.url, code=303)
 
     # render shipment form
-    return render(request, 'shop/checkout.html', {'cart_items': cart_items})
+    return render(request, 'shop/checkout.html', {'cart_items': cart_items, 'total': total})
 
 
 @csrf_exempt

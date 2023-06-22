@@ -166,7 +166,7 @@ function loadCartDetail(){
         for (var i=0; i<pks.length; i++){
             var pk = pks[i];
             var productDetails = cart[pk];
-            total = total + parseFloat(productDetails['price']);
+            total = total + parseFloat(productDetails['price']) * Number(productDetails['quantity']);
 
             detail.append(`
             <div class="col d-flex justify-content-center">

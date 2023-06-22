@@ -16,17 +16,15 @@
                     <div class="card-body container py-5">
                         <h5 class="card-title">{{ order_item.title }}</h5>
                         <p class="card-text">${{ order_item.price }}</p>
+                        <p class="card-text">Quantity: {{ order_item.quantity }}</p>
                     </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- <a href="{% url 'product_detail' order_item.pk %}"><h1>{{ order_item.title }}</h1></a>
-        <img src="{{order_item.image}}">
-        <p>{{ order_item.price }}</p>
-        <p>{{ order_item.quantity }}</p> -->
         {% endfor %}
     </div>
+    <h3 class="text-center">Total: ${{ total|floatformat:2 }}</h3>
 </div>
 
 {% endblock content %}
