@@ -1,24 +1,32 @@
 {% extends 'main.html' %}
 
 {% block content %}
-
-<h1>Orders</h1>
-<div>
-    <h1>{{ order.stripe_id }}</h1>
-    <p>{{ order.first_name }}</p>
-    <p>{{ order.last_name }}</p>
-    <p>{{ order.phone }}</p>
-    <p>{{ order.email }}</p>
-    <p>{{ order.postcode }}</p>
-    <p>{{ order.address }}</p>
+<div class="container py-5" id="order_detail">
+    <div>
+        {% for order_item in order_items %}
+        <div class="col d-flex justify-content-center">
+            <div class="card mb-3 shadow" id="detail_cartitem">
+                <div class="row no-gutters">
+                    <div class="col-md-6">
+                    <a href="{% url 'product_detail' order_item.pk %}">
+                    <img src="{{order_item.image}}" height="300" class="card-img" alt="...">
+                    </a>
+                    </div>    
+                    <div class="col-md-6">
+                    <div class="card-body container py-5">
+                        <h5 class="card-title">{{ order_item.title }}</h5>
+                        <p class="card-text">${{ order_item.price }}</p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <a href="{% url 'product_detail' order_item.pk %}"><h1>{{ order_item.title }}</h1></a>
+        <img src="{{order_item.image}}">
+        <p>{{ order_item.price }}</p>
+        <p>{{ order_item.quantity }}</p> -->
+        {% endfor %}
+    </div>
 </div>
 
-<div>
-    {% for order_item in order_items %}
-    <a href="{% url 'product_detail' order_item.pk %}"><h1>{{ order_item.title }}</h1></a>
-    <img src="{{order_item.image}}">
-    <p>{{ order_item.price }}</p>
-    <p>{{ order_item.quantity }}</p>
-    {% endfor %}
-</div>
 {% endblock content %}

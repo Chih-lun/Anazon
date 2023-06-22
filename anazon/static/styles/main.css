@@ -21,7 +21,7 @@ ul.errorlist, .helptext {
 }
 
 
-#login_form, #register_form, #shipping_form {
+#login_form, #register_form, #shipping_form, #order_content {
     display: inline-block;
     text-align: left;
 }
@@ -44,6 +44,10 @@ ul.errorlist, .helptext {
     line-height: 400px;   
 }
 
-#detail_cartitem{
+#detail_cartitem {
+    width: 55%;
+}
+
+#order {
     width: 55%;
 }

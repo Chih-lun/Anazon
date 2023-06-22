@@ -2,12 +2,31 @@
 
 {% block content %}
 
-<div class="text-center container py-5">
+<div class="container py-5">
 {% if not orders %}
 <h1 id="order_message">You do not have any order!</h1>
 {% else %}
+
 {% for order in orders %}
-<a href="{% url 'order_detail' order.stripe_id %}">{{ order.stripe_id }}</a>
+<div class="col d-flex justify-content-center">
+    <div class="card shadow" id="order">
+        <div class="card-header">
+            <a href="{% url 'order_detail' order.stripe_id %}">
+            {{ order.stripe_id }}
+            </a>
+        </div>
+        <div class="card-body">
+            <div id="order_content">
+                <h6 class="card-subtitle mb-2 text-muted">Order on {{ order.created }}</h6>
+                <p class="card-text">Name: {{ order.first_name }} {{ order.last_name }}</p>
+                <p class="card-text">Phone: {{ order.phone }}</p>
+                <p class="card-text">Email: {{ order.email }}</p>
+                <p class="card-text">Address: {{ order.postcode }} {{ order.address }}</p>
+            </div>
+        </div>
+      </div>
+</div>
+<!-- <a href="{% url 'order_detail' order.stripe_id %}">{{ order.stripe_id }}</a> -->
 <br>
 {% endfor %}
 

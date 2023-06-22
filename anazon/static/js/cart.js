@@ -113,7 +113,7 @@ function loadCart(){
                         <div class="col-md-6">
                         <div class="card-body">
                             <h5 class="card-title">${productDetails['title']}</h5>
-                            <p class="card-text">$${productDetails['price']}</p>
+                            <p class="card-text">$${parseFloat(productDetails['price']).toFixed(2)}</p>
                             <p class="card-text">Quantity: ${productDetails['quantity']}</p>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
@@ -180,7 +180,7 @@ function loadCartDetail(){
                         <div class="col-md-6">
                         <div class="card-body container py-5">
                             <h5 class="card-title">${productDetails['title']}</h5>
-                            <p class="card-text">$${productDetails['price']}</p>
+                            <p class="card-text">$${parseFloat(productDetails['price']).toFixed(2)}</p>
                             <input class="card-text" type="number" name="${pk}" value="${productDetails['quantity']}" min="1" step="1" onchange="updateCartItem(this.name, this.value)"></input>
                             <br>
                             <br>
@@ -198,7 +198,7 @@ function loadCartDetail(){
         }
 
         detail.append(`
-        <h3>Total: $${total}</h3>
+        <h3>Total: $${parseFloat(total).toFixed(2)}</h3>
         <input type="submit" class="btn btn-primary" value="Checkout">
         `)
     }

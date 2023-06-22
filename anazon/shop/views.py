@@ -137,7 +137,7 @@ def order(request):
     # find all the orders
     orders = Order.objects.filter(user=request.user).all()
     # pagination
-    paginator = Paginator(orders, 10)
+    paginator = Paginator(orders, 4)
 
     # convert page into int
     try:
