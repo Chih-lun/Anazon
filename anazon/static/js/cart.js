@@ -106,15 +106,19 @@ function loadCart(){
                 <div class="card mb-3" id="dropdown_cartitem">
                     <div class="row no-gutters">
                         <div class="col-md-6">
+                        <a href="/product_detail/${productDetails['pk']}">
                         <img src="${productDetails['image']}" height="200" class="card-img" alt="...">
+                        </a>
                         </div>
                         <div class="col-md-6">
                         <div class="card-body">
                             <h5 class="card-title">${productDetails['title']}</h5>
                             <p class="card-text">$${productDetails['price']}</p>
                             <p class="card-text">Quantity: ${productDetails['quantity']}</p>
-                            <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
-                            <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
+                                <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
+                            </div>
                         </div>
                         </div>
                     </div>
@@ -155,11 +159,13 @@ function loadCartDetail(){
         // total price
         var total = 0;
 
+        // add title
+        detail.append("<h1>Your Cart:</h1>");
+
         // generate each cartItem and buttons in cart_detail
         for (var i=0; i<pks.length; i++){
             var pk = pks[i];
             var productDetails = cart[pk];
-
             total = total + parseFloat(productDetails['price']);
 
             detail.append(`
@@ -167,8 +173,10 @@ function loadCartDetail(){
                 <div class="card mb-3" id="detail_cartitem"">
                     <div class="row no-gutters">
                         <div class="col-md-6">
+                        <a href="/product_detail/${productDetails['pk']}">
                         <img src="${productDetails['image']}" height="300" class="card-img" alt="...">
-                        </div>
+                        </a>
+                        </div>    
                         <div class="col-md-6">
                         <div class="card-body container py-5">
                             <h5 class="card-title">${productDetails['title']}</h5>
@@ -176,9 +184,11 @@ function loadCartDetail(){
                             <input class="card-text" type="number" name="${pk}" value="${productDetails['quantity']}" min="1" step="1" onchange="updateCartItem(this.name, this.value)"></input>
                             <br>
                             <br>
-                            <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
-                            <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
-                            <button type="button" class="btn btn-danger" value="${pk}" onclick="clearCartItem(this.value)">clear</button>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" value="${pk}" onclick="append(this.value)">+</button>
+                                <button type="button" class="btn btn-danger" value="${pk}" onclick="remove(this.value)">-</button>
+                                <button type="button" class="btn btn-warning" value="${pk}" onclick="clearCartItem(this.value)">Clear</button>
+                            </div>
                         </div>
                         </div>
                     </div>
@@ -208,7 +218,7 @@ function addToCart(){
     // check whether the product is in the cart or not, then decide whether create a new one or update it
     var cartItem = getCartItem(cart, pk);
     if (cartItem === undefined){
-        cartItem = {'title': title, 'image': image, 'price': price, 'quantity': Number(quantity)};
+        cartItem = {'pk': pk, 'title': title, 'image': image, 'price': price, 'quantity': Number(quantity)};
     } else {
         updateQuantity(cartItem, Number(cartItem['quantity']) + Number(quantity));
     }

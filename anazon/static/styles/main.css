@@ -1,5 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 html { 
     margin-bottom: 35px;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+a {
+    text-decoration: none;
 }
 
 ul.errorlist, .helptext {
@@ -11,7 +21,7 @@ ul.errorlist, .helptext {
 }
 
 
-#login_form, #register_form {
+#login_form, #register_form, #shipping_form {
     display: inline-block;
     text-align: left;
 }

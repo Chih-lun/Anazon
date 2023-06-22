@@ -209,7 +209,12 @@ def checkout(request):
         raise HttpResponseForbidden()
 
     # load cart from session and parse it into json
-    cart_items = json.loads(request.session['cart_items'])
+    try:
+        cart_items = json.loads(request.session['cart_items'])
+    except:
+        # if cart is empty raise error
+        raise HttpResponseForbidden()
+
     # then refine it. cart_items example [(<Product: Acer SB220Q bi 21.5 inches Full HD (1920 x 1080) IPS Ultra-Thin>, '1'),
     #  (<Product: Opna Women's Short Sleeve Moisture>, '2')]
     cart_items = [{'product': Product.objects.get(pk=cart_item[0]), 'quantity':cart_item[1][0]}
@@ -223,7 +228,6 @@ def checkout(request):
         email = request.POST.get('email')
         postcode = request.POST.get('postcode')
         address = request.POST.get('address')
-
         # get its form in line_items, so it can be passed to stripe payment
         line_items = []
         for cart_item in cart_items:
