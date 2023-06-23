@@ -6,12 +6,12 @@ Anazon is a versatile e-commerce platform offering a wide range of products to f
 
 # How to start Anazon
 
-## Install required package.
+## Install required package
 
 1. cd anazon
 2. pip install -r requirements.txt
 
-## Configure environment variables. Package dotenv will load all them.
+## Configure environment variables. Package dotenv will load all them
 
 1. cd anazon
 2. touch .env
