@@ -12,9 +12,13 @@ a {
     text-decoration: none;
 }
 
-/* ul.errorlist, .helptext {
-    display:none;
-} */
+.nav-item {
+    margin-bottom: 5px;
+}
+
+.tags {
+    margin-bottom: 5px; 
+}
 
 #product_description{
     font-size: 28px;
