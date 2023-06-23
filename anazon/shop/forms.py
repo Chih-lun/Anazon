@@ -1,6 +1,6 @@
-from django.forms import ModelForm, EmailInput, PasswordInput
+from django.forms import ModelForm, EmailInput, PasswordInput, TextInput, CharField
 from django.contrib.auth.forms import UserCreationForm
-from .models import User
+from .models import User, Order
 
 
 class LoginForm(ModelForm):
@@ -12,12 +12,13 @@ class LoginForm(ModelForm):
             "password": "Password"
         }
         widgets = {
-            "email":  EmailInput(attrs={'placeholder': 'email', 'autocomplete': 'off'}),
-            "password": PasswordInput(attrs={'placeholder': '********', 'autocomplete': 'off', 'data-toggle': 'password'}),
+            "email":  EmailInput(attrs={'class': 'form-control form-control-lg', 'required': 'required', 'placeholder': 'Your Email', 'autocomplete': 'off'}),
+            "password": PasswordInput(attrs={'class': 'form-control form-control-lg', 'required': 'required', 'placeholder': '********', 'autocomplete': 'off', 'data-toggle': 'password'}),
         }
 
 
 class RegisterForm(UserCreationForm):
+
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name']
@@ -26,4 +27,48 @@ class RegisterForm(UserCreationForm):
         }
         help_texts = {
             'password': None,
+        }
+        widgets = {
+            "username":  EmailInput(attrs={'class': 'form-control form-control-lg', 'required': 'required', 'placeholder': 'Email'}),
+            "first_name": TextInput(attrs={'class': 'form-control form-control-lg', 'required': 'required', 'placeholder': 'First Name'}),
+            "last_name": TextInput(attrs={'class': 'form-control form-control-lg', 'required': 'required', 'placeholder': 'Last Name'}),
+        }
+
+    # for password1 and password2
+    def __init__(self, *args, **kwargs):
+        super(RegisterForm, self).__init__(*args, **kwargs)
+        self.fields['password1'].widget.attrs\
+            .update({
+                'class': 'form-control form-control-lg',
+                'required': 'required',
+                'placeholder': '********',
+            })
+        self.fields['password2'].widget.attrs\
+            .update({
+                'class': 'form-control form-control-lg',
+                'required': 'required',
+                'placeholder': '********',
+            })
+
+
+class ShippingForm(ModelForm):
+    class Meta:
+        model = Order
+        fields = ['first_name', 'last_name',
+                  'phone', 'email', 'postcode', 'address']
+        labels = {
+            "first_name": "",
+            "last_name": "",
+            "phone": "",
+            "email": "",
+            "postcode": "",
+            "address": "",
+        }
+        widgets = {
+            "first_name": TextInput(attrs={'class': 'form-control form-control-lg', 'required': 'required', 'placeholder': 'First Name'}),
+            "last_name": TextInput(attrs={'class': 'form-control form-control-lg', 'required': 'required', 'placeholder': 'Last Name'}),
+            "phone": TextInput(attrs={'class': 'form-control form-control-lg', 'id': 'shipping_phone', 'required': 'required', 'placeholder': 'Phone', 'type': 'text'}),
+            "email":  EmailInput(attrs={'class': 'form-control form-control-lg', 'required': 'required', 'placeholder': 'Email', 'autocomplete': 'off'}),
+            "postcode": TextInput(attrs={'class': 'form-control form-control-lg', 'required': 'required', 'placeholder': 'Postcode'}),
+            "address": TextInput(attrs={'class': 'form-control form-control-lg', 'required': 'required', 'placeholder': 'Address'}),
         }

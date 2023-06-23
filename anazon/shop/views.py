@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django .core.paginator import Paginator, EmptyPage
 from django.db.models import Q, Subquery
 from .models import Category, Product, Order, User
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ShippingForm
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
@@ -31,13 +31,17 @@ def user_login(request):
         # as defined in model. email is used to replace username
         email = request.POST.get('email')
         password = request.POST.get('password')
-
         # user authentication
         user = authenticate(request, username=email, password=password)
         if user:
             login(request, user)
-            # redirect to the page before login
-            return redirect(request.GET.get('next'))
+            # redirect to the page before login or home
+            next = request.GET.get('next') if request.GET.get(
+                'next') != None else ''
+            if next:
+                return redirect(next)
+            else:
+                return redirect('home')
         else:
             messages.error(
                 request, ('Invalid email or password. Please Try Again!'))
@@ -49,14 +53,22 @@ def user_logout(request):
     ''' USER LOGOUT '''
 
     logout(request)
-    # redirect to the page before login
-    return redirect(request.GET.get('next'))
+
+    # redirect to the page before login or home
+    next = request.GET.get('next') if request.GET.get(
+        'next') != None else ''
+    # if it is checkout, it is not going to redirect
+    if next != '/checkout':
+        return redirect(next)
+    else:
+        return redirect('home')
 
 
 def register(request):
     ''' USER REGISTRATION '''
 
-    form = RegisterForm(request.POST)
+    # request.POST for post and None for get
+    form = RegisterForm(request.POST or None)
 
     # restrict the authenticated user
     if request.user.is_authenticated:
@@ -229,65 +241,69 @@ def checkout(request):
     total = sum([cart_item['product'].price *
                  int(cart_item['quantity']) for cart_item in cart_items])
 
+    # form for get shipping information
+    form = ShippingForm(request.POST or None)
+
     if request.method == 'POST':
-        # shipment details
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        phone = request.POST.get('phone')
-        email = request.POST.get('email')
-        postcode = request.POST.get('postcode')
-        address = request.POST.get('address')
-        # get its form in line_items, so it can be passed to stripe payment
-        line_items = []
-        for cart_item in cart_items:
-            product = cart_item['product']
-            quantity = cart_item['quantity']
-            line_items.append({
-                'price_data': {
-                    'currency': 'usd',
-                    'unit_amount': int(product.price * 100),
-                    'product_data': {
-                        'name': product.title,
-                        'description': product.description,
-                        'images': [product.image],
-                        'metadata': {
-                            'pk': product.pk,
-                        }
+        if form.is_valid():
+            # shipment details
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            phone = request.POST.get('phone')
+            email = request.POST.get('email')
+            postcode = request.POST.get('postcode')
+            address = request.POST.get('address')
+            # get its form in line_items, so it can be passed to stripe payment
+            line_items = []
+            for cart_item in cart_items:
+                product = cart_item['product']
+                quantity = cart_item['quantity']
+                line_items.append({
+                    'price_data': {
+                        'currency': 'usd',
+                        'unit_amount': int(product.price * 100),
+                        'product_data': {
+                            'name': product.title,
+                            'description': product.description,
+                            'images': [product.image],
+                            'metadata': {
+                                'pk': product.pk,
+                            }
+                        },
                     },
-                },
-                'quantity': quantity,
-            })
+                    'quantity': quantity,
+                })
 
-        # create checkout session
-        try:
-            checkout_session = stripe.checkout.Session.create(
-                payment_method_types=[
-                    'card',
-                ],
-                line_items=line_items,
-                metadata={
-                    "user_pk": request.user.pk,
-                    "first_name": first_name,
-                    "last_name": last_name,
-                    "phone": phone,
-                    "email": email,
-                    "postcode": postcode,
-                    "address": address,
-                },
-                mode='payment',
-                success_url=request.build_absolute_uri(
-                    reverse('success')) + '?session_id={CHECKOUT_SESSION_ID}',
-                cancel_url=request.build_absolute_uri(reverse('cancel')),
-            )
-        except:
-            # unexpected error
-            return HttpResponse(status=500)
+            # create checkout session
+            try:
+                checkout_session = stripe.checkout.Session.create(
+                    payment_method_types=[
+                        'card',
+                    ],
+                    line_items=line_items,
+                    metadata={
+                        "user_pk": request.user.pk,
+                        "first_name": first_name,
+                        "last_name": last_name,
+                        "phone": phone,
+                        "email": email,
+                        "postcode": postcode,
+                        "address": address,
+                    },
+                    mode='payment',
+                    success_url=request.build_absolute_uri(
+                        reverse('success')) + '?session_id={CHECKOUT_SESSION_ID}',
+                    cancel_url=request.build_absolute_uri(reverse('cancel')),
+                )
+            except:
+                # unexpected error
+                return HttpResponse(status=500)
 
-        # redirect it to stripe payment
-        return redirect(checkout_session.url, code=303)
+            # redirect it to stripe payment
+            return redirect(checkout_session.url, code=303)
 
     # render shipment form
-    return render(request, 'shop/checkout.html', {'cart_items': cart_items, 'total': total})
+    return render(request, 'shop/checkout.html', {'cart_items': cart_items, 'total': total, 'form': form})
 
 
 @csrf_exempt

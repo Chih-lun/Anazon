@@ -12,9 +12,9 @@ a {
     text-decoration: none;
 }
 
-ul.errorlist, .helptext {
+/* ul.errorlist, .helptext {
     display:none;
-}
+} */
 
 #product_description{
     font-size: 28px;
