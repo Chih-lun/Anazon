@@ -1,17 +1,19 @@
-from django.shortcuts import render, redirect, reverse, HttpResponse
-from django.http import HttpResponseForbidden, JsonResponse, Http404
-from django.contrib import messages
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
-from django .core.paginator import Paginator, EmptyPage
-from django.db.models import Q, Subquery
-from .models import Category, Product, Order, User
-from .forms import LoginForm, RegisterForm, ShippingForm
-import stripe
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
 import json
+
+import stripe
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import EmptyPage, Paginator
+from django.db.models import Q, Subquery
+from django.http import Http404, HttpResponseForbidden, JsonResponse
+from django.shortcuts import HttpResponse, redirect, render, reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+
+from .forms import LoginForm, RegisterForm, ShippingForm
+from .models import Category, Order, Product, User
 
 
 def home(request):

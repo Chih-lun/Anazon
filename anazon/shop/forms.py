@@ -1,6 +1,7 @@
-from django.forms import ModelForm, EmailInput, PasswordInput, TextInput, CharField
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Order
+from django.forms import EmailInput, ModelForm, PasswordInput, TextInput
+
+from .models import Order, User
 
 
 class LoginForm(ModelForm):
